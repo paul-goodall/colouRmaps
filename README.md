@@ -6,8 +6,14 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of colouRmaps is to provide additonal colour maps or palettes
-for R graphics, and for easy use alongside ggplot.
+The goal of colouRmaps is to provide additional colour maps or palettes
+for R graphics, and for easy use alongside ggplot, and other graphical
+tools.
+
+Some of the colour tables herein were taken from STARLINK’s GAIA
+distribution, where they have the GNU copyleft. Further information on
+STARLINK and GAIA can be found via <http://star-www.rl.ac.uk/> and
+<http://star-www.dur.ac.uk/~pdraper/>
 
 ## Installation
 
