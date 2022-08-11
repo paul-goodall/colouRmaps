@@ -160,14 +160,14 @@ colouRmaps$define_map$smooth_redblue <- function(z0, normalise=T, output_mode=1)
   return (awesome_colours)
 }
 # =====================================
-colouRmaps$define_map$rgb_harmonics <- function(z0, normalise=T, output_mode=1, freq_r=0.5,freq_g=1.5,freq_b=2.5){
+colouRmaps$define_map$rgb_harmonics <- function(z0, normalise=T, output_mode=1, freq_r=0.5,freq_g=1.5,freq_b=2.5, phase_r=0, phase_g=0, phase_b=0){
 
   z <- colouRmaps$general$normalise_z(z0, normalise)
   r=g=b <- z*0
 
-  r <- 0.5*(1 - cos(z*freq_r*2*pi))
-  g <- 0.5*(1 - cos(z*freq_g*2*pi))
-  b <- 0.5*(1 - cos(z*freq_b*2*pi))
+  r <- 0.5*(1 - cos(z*freq_r*2*pi + phase_r))
+  g <- 0.5*(1 - cos(z*freq_g*2*pi + phase_g))
+  b <- 0.5*(1 - cos(z*freq_b*2*pi + phase_b))
 
   # Cap and Tail:
   r <- colouRmaps$general$rgb_cap_n_tail(r)

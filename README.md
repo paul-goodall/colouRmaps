@@ -19,7 +19,7 @@ You can install the development version of colouRmaps from
 devtools::install_github("paul-goodall/colouRmaps")
 ```
 
-## Example
+## Existing ColouRmaps
 
 Gettings started - view the available colouRmaps with:
 
@@ -70,7 +70,87 @@ grid.arrange(p1,p2, nrow=1,ncol=2)
 
 <img src="man/figures/README-cmap_show_one-1.png" width="100%" />
 
-We can use `colouRise` to change the continious colour mapping for
+## Defining new ColouRmaps
+
+`rgb_harmonics` is a fun one, because it allows you to create a palette
+from the superposition of R,G and B cosines. You can make some very
+weird and wacky colour-palettes this way, but mostly they are
+non-intuitive and ugly unless you’re careful about choosing your
+boundary conditions. Smoothly-changing and continuous ColouRmaps are
+best for most purposes, but you can of course create some ColourMaps
+that are discrete (suchs as `aips0`), or discontinuous (such as
+`backgr`), depending on your purposes.
+
+### A smooth ColouRmap example:
+
+``` r
+
+# Create a new colouRmap definition:
+colouRmaps$define_map$new_palette1 <- function(z0, normalise=T, output_mode=1){
+  
+  freq_r=0.5
+  phase_r=0
+  
+  freq_g=1
+  phase_g=0
+  
+  freq_b=0.5
+  phase_b=pi
+  
+  colouRmaps$define_map$rgb_harmonics(z0=z0, 
+                                      normalise=normalise, 
+                                      output_mode=output_mode,
+                                      freq_r=freq_r, phase_r=phase_r,
+                                      freq_g=freq_g, phase_g=phase_g,
+                                      freq_b=freq_b, phase_b=phase_b
+                                      )
+}
+
+cmap_show("new_palette1")
+```
+
+<img src="man/figures/README-cmap_new_smooth-1.png" width="100%" />
+
+### A stripey ColouRmap example:
+
+``` r
+colouRmaps$define_map$new_palette2 <- function(z0, normalise=T, output_mode=1){
+  
+  freq_r=0.5
+  phase_r=0
+  
+  freq_g=0.5
+  phase_g=pi
+  
+  freq_b=10
+  phase_b=0
+  
+  freq_r=0.5
+  phase_r=0
+  
+  freq_g=10
+  phase_g=0
+  
+  freq_b=0.5
+  phase_b=pi
+  
+  colouRmaps$define_map$rgb_harmonics(z0=z0, 
+                                      normalise=normalise, 
+                                      output_mode=output_mode,
+                                      freq_r=freq_r, phase_r=phase_r,
+                                      freq_g=freq_g, phase_g=phase_g,
+                                      freq_b=freq_b, phase_b=phase_b
+                                      )
+}
+
+cmap_show("new_palette2")
+```
+
+<img src="man/figures/README-cmap_new_stripey-1.png" width="100%" />
+
+## Continous Colour Mapping
+
+We can use `colouRise` to change the continuous colour mapping for
 ggplots. This is just a wrapper for `ggplot2::continuous_scale` to allow
 a neater calling for `colouRmaps::cmap_continuous`:
 
@@ -118,7 +198,7 @@ p1
 
 ``` r
 
-p1 + colouRise("roygbiv4", aesthetics = "color")
+p1 + colouRise("blue_purple_red4", aesthetics = "color")
 ```
 
 <img src="man/figures/README-scatterplot_example-2.png" width="100%" />
@@ -131,7 +211,7 @@ p2 + colouRise("roygbiv4", aesthetics = "color")
 
 <img src="man/figures/README-scatterplot_example-3.png" width="100%" />
 
-An image example:
+## Image examples
 
 ``` r
 # Adapted from graphics::image example:
@@ -146,3 +226,59 @@ title(main = "Maunga Whau Volcano", font.main = 4, sub="ColouRed using cmap='gre
 ```
 
 <img src="man/figures/README-image_example-1.png" width="100%" />
+
+``` r
+# Adapted from graphics::image example:
+
+x <- 10*(1:nrow(volcano))
+y <- 10*(1:ncol(volcano))
+image(x, y, volcano, col = cmap_create("new_palette1"), axes = FALSE)
+axis(1, at = seq(100, 800, by = 100))
+axis(2, at = seq(100, 600, by = 100))
+box()
+title(main = "Maunga Whau Volcano", font.main = 4, sub="The smooth 'new_palette1' is OK for images.")
+```
+
+<img src="man/figures/README-image_example2-1.png" width="100%" />
+
+``` r
+# Adapted from graphics::image example:
+
+x <- 10*(1:nrow(volcano))
+y <- 10*(1:ncol(volcano))
+image(x, y, volcano, col = cmap_create("new_palette2"), axes = FALSE)
+axis(1, at = seq(100, 800, by = 100))
+axis(2, at = seq(100, 600, by = 100))
+box()
+title(main = "Maunga Whau Volcano", font.main = 4, sub="The stripey 'new_palette2' is awful for images (use contours instead)")
+```
+
+<img src="man/figures/README-image_example3-1.png" width="100%" />
+
+``` r
+# Adapted from graphics::image example:
+
+x <- 10*(1:nrow(volcano))
+y <- 10*(1:ncol(volcano))
+image(x, y, volcano, col = cmap_create("paints2"), axes = FALSE)
+axis(1, at = seq(100, 800, by = 100))
+axis(2, at = seq(100, 600, by = 100))
+box()
+title(main = "Maunga Whau Volcano", font.main = 4, sub="Paint-by-numbers")
+```
+
+<img src="man/figures/README-image_example4-1.png" width="100%" />
+
+``` r
+# Adapted from graphics::image example:
+
+x <- 10*(1:nrow(volcano))
+y <- 10*(1:ncol(volcano))
+image(x, y, volcano, col = cmap_create("aips0"), axes = FALSE)
+axis(1, at = seq(100, 800, by = 100))
+axis(2, at = seq(100, 600, by = 100))
+box()
+title(main = "Maunga Whau Volcano", font.main = 4, sub="'My Tower of Hanoi Melted!' - by Paul Goodall")
+```
+
+<img src="man/figures/README-image_example5-1.png" width="100%" />
