@@ -2,7 +2,7 @@
 % Please edit documentation in R/colouRmaps.R
 \name{cmap_show}
 \alias{cmap_show}
-\title{Show Colourmap}
+\title{Show a Colourmap}
 \usage{
 cmap_show(colourmap_name = "none", ncolours = 1000, ...)
 }

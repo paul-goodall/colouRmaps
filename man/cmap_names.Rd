@@ -6,11 +6,6 @@
 \usage{
 cmap_names()
 }
-\arguments{
-\item{my_str}{A character vector to be cut}
-
-\item{nc}{Number of characters from the left to be kept}
-}
 \value{
 A character vector of extract strings of length nchar=nc
 }

@@ -1,0 +1,127 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  cache=T
+)
+```
+
+# colouRmaps <img src="man/figures/logo.png" align="right" height="138" />
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of colouRmaps is to provide additonal colour maps or palettes for R graphics, and for easy use alongside ggplot.
+
+## Installation
+
+You can install the development version of colouRmaps from [GitHub](https://github.com/paul-goodall/colouRmaps) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("paul-goodall/colouRmaps")
+```
+
+## Example
+
+Gettings started - view the available colouRmaps with:
+
+```{r show_cmap_names}
+library(colouRmaps)
+
+cmap_names()
+
+```
+
+You can view the colour bars for the colouRmaps like so:
+
+```{r cmap_show_all, eval=F}
+cmap_show_all()
+```
+
+![](man/figures/all_cmaps.png)
+
+
+Alternatively, you can have a sneak-peak under the hood at a particular colourmap in more detail:
+
+```{r cmap_show_one}
+p1 <- cmap_show("rgb_harmonics")
+p2 <- cmap_show("great_barrier_reef")
+
+library(gridExtra)
+grid.arrange(p1,p2, nrow=1,ncol=2)
+```
+
+We can use `colouRise` to change the continious colour mapping for ggplots.  This is just a wrapper for `ggplot2::continuous_scale` to allow a neater calling for `colouRmaps::cmap_continuous`:
+
+```{r hexbin_example}
+library(colouRmaps)
+library(ggplot2)
+
+p1 <- ggplot(diamonds, aes(carat, price)) + 
+  geom_hex(binwidth = c(.1, 500))
+
+p2 <- p1 + colouRise("gle_redblue", aesthetics = "fill")
+
+p3 <- p1 + colouRise("gle_redblue", aesthetics = "fill", trans="sqrt")
+
+p4 <- p1 + colouRise("gle_redblue", aesthetics = "fill", trans="log10")
+
+library(gridExtra)
+grid.arrange(p1,p2,p3,p4, nrow=2,ncol=2)
+
+```
+
+
+A scatterplot example:
+
+```{r scatterplot_example_prelims, echo=T, warning=F, message=F}
+library(colouRmaps)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r scatterplot_example}
+df <- diamonds %>% mutate('approx_volume'= (4/3)*pi*((x+y+z)/6)^3,
+        'price_per_carat'=price/carat,
+        'price_density'=price/approx_volume)
+ii <- which(df$approx_volume == 0)
+df$price_density[ii] <- NA
+
+df <- df %>% filter(approx_volume < 1000, price_density < 200)
+
+p1 <- ggplot(df, aes(approx_volume, price, color=price_per_carat)) + geom_point()
+p1
+
+p1 + colouRise("roygbiv4", aesthetics = "color")
+
+p2 <- ggplot(df, aes(approx_volume, carat)) + geom_point(aes(color=price_density))
+p2 + colouRise("roygbiv4", aesthetics = "color")
+
+
+```
+
+An image example:
+
+```{r image_example}
+# Adapted from graphics::image example:
+
+x <- 10*(1:nrow(volcano))
+y <- 10*(1:ncol(volcano))
+image(x, y, volcano, col = cmap_create("great_barrier_reef"), axes = FALSE)
+axis(1, at = seq(100, 800, by = 100))
+axis(2, at = seq(100, 600, by = 100))
+box()
+title(main = "Maunga Whau Volcano", font.main = 4, sub="ColouRed using cmap='great_barrier_reef'")
+
+```
+
+

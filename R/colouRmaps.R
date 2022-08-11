@@ -3,15 +3,13 @@
 #'
 #' Lists the colourmaps available via *colouRmap*
 #'
-#' @param my_str A character vector to be cut
-#' @param nc Number of characters from the left to be kept
 #' @return A character vector of extract strings of length nchar=nc
 #' @export
 cmap_names <- function(){
   colouRmaps$mapnames()
 }
 
-#' Show Colourmap
+#' Show a Colourmap
 #'
 #' Show a graphical representation of a particular colourmap.
 #'
@@ -45,10 +43,58 @@ cmap_show_all <- function(){
 #' 1 ==> returns a named list
 #' 2 ==> returns a detailed data frame
 #' 3 ==> returns a simpler data frame
+#' @param ... ...
 #' @return returns an object mapping your data to colours as per `output_mode`
 #' @export
-cmap_create <- function(colourmap_name="rainbow5", zvals, normalise=T, output_mode=1, ...){
+cmap_create <- function(colourmap_name="rainbow5", zvals=1:1000, normalise=T, output_mode=1, ...){
   colouRmaps$define_map[[colourmap_name]](z0=zvals, normalise=normalise, output_mode=output_mode, ...)
 }
+
+#' Create continuous colour-Palette for use with ggplot
+#'
+#' Creates the colourmap values for your data, from a specified colourmap.
+#'
+#' @param colourmap_name The name of one of the colourmaps shown via `cmap_names`
+#' @return returns a function to convert value=x to a hex-value colour.
+#' @export
+cmap_continuous <- function(colourmap_name="rainbow5"){
+  z0 <- 0:100/100
+  c0 <- colouRmaps$define_map[[colourmap_name]](z0=z0, normalise=T, output_mode=3)
+
+  function(x){
+    r  <- stats::approx(z0, c0$red,   xout=x)$y
+    g  <- stats::approx(z0, c0$green, xout=x)$y
+    b  <- stats::approx(z0, c0$blue,  xout=x)$y
+    hh <- as.character(x)
+    ii <- which(is.na(x))
+    if(length(ii) > 0){
+      hh[-ii] <- grDevices::rgb(r[-ii],g[-ii],b[-ii])
+      hh[ii] <- NA
+    } else {
+      hh <- grDevices::rgb(r,g,b)
+    }
+    return (hh)
+  }
+}
+
+#' Wrapper for ggplot2::continuous_scale
+#'
+#' Concise call to colourise a ggplot object with a colouRmap
+#'
+#' @param colourmap_name The name of one of the colourmaps shown via `cmap_names`
+#' @param aesthetics - as per `ggplot2::continuous_scale`
+#' @param scale_name - as per `ggplot2::continuous_scale`
+#' @param na.value - as per `ggplot2::continuous_scale`
+#' @param guide - as per `ggplot2::continuous_scale`
+#' @param trans - as per `ggplot2::continuous_scale`
+#' @return a `ggplot2::continuous_scale` with a colouRmap palette
+#' @export
+#'
+colouRise <- function(colourmap_name="roygbiv2", aesthetics = "fill", scale_name="gradient", na.value = "grey50", guide = "colourbar", trans="identity"){
+  ggplot2::continuous_scale(aesthetics = aesthetics, scale_name=scale_name,
+                   palette=colouRmaps::cmap_continuous(colourmap_name),
+                   na.value = na.value, guide = guide, trans=trans)
+}
+
 
 

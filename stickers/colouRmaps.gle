@@ -1,0 +1,100 @@
+
+
+lx = 4.39
+ly = 5.08
+
+size lx ly
+
+
+
+
+sub hexagon_outline majordiameter borderwidth bordercol$
+    ds1 = majordiameter/2
+    ds2 = ds1*cos(30*pi/180)
+    ds3 = ds1*sin(30*pi/180)
+    set lwidth borderwidth
+    set color bordercol$
+    rmove lx/2 0
+    rline ds2 ds3
+    rline 0 ds1
+    rline -ds2 ds3
+    rline -ds2 -ds3
+    rline 0 -ds1
+    rline ds2 -ds3
+end sub
+
+sub hexagon majordiameter borderwidth bordercol$ fillcol$
+    x0 = xpos()
+    y0 = ypos()
+    begin clip
+      begin path clip stroke
+        @hexagon_outline majordiameter 0.00001 "black"
+      end path
+      amove x0 y0
+      box majordiameter majordiameter fill fillcol$ nobox
+      amove x0 y0
+      @hexagon_outline majordiameter borderwidth bordercol$
+    end clip
+end sub
+
+include "color.gle"
+sub gauss x y
+  s = 0.75
+  return exp(-(x^2+y^2)/(2*s^2))
+end sub
+
+sub hexsticker majordiameter borderwidth bordercol$ fillcol$
+    x0 = xpos()
+    y0 = ypos()
+    begin clip
+      begin path clip stroke
+        @hexagon_outline majordiameter 0.00001 "black"
+      end path
+      amove x0-0.3 y0+0.05
+
+begin graph
+  size 5 5
+  fullsize
+  title ""
+  xaxis min -2 max 2
+  yaxis min -2 max 2
+  colormap gauss(x,y) 200 200 zmin 0 zmax 1 color
+end graph
+
+      amove x0 y0
+      @hexagon_outline majordiameter borderwidth bordercol$
+    end clip
+end sub
+
+
+amove 0 0
+set background transparent
+hexsticker ly 0.1 "white" "blue"
+
+
+set hei 0.8
+amove 0.23 2.3
+set fill white
+set color black
+set lwidth 0.05
+begin clip
+x0 = xpos()
+y0 = ypos()
+  begin path clip stroke
+    text colouRmaps
+  end path
+amove x0-0.1 y0-1
+begin graph
+  size 4.4 4.4
+  fullsize
+  title ""
+  xtitle ""
+  ytitle ""
+  xaxis min 0 max 1
+  yaxis min 0 max 1
+  xaxis off
+  yaxis off
+  colormap x 200 200 zmin 0 zmax 1 color
+end graph
+end clip
+

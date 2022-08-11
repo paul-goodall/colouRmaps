@@ -5,7 +5,7 @@
 \alias{colouRmaps}
 \title{Colour Map data}
 \format{
-An Rdata object containing various coulour lookup tables
+An Rdata object containing various colour lookup tables
 and functional colour maps.
 }
 \usage{

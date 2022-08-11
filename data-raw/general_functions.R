@@ -15,7 +15,7 @@ colouRmaps$general$normalise_z <- function(z0, normalise){
     if(z1 <= 1) checks <- checks + 1
     if(z2 >= 0) checks <- checks + 1
     if(z2 <= 1) checks <- checks + 1
-    print("min_z = ", z1, "\nmax_z = ", z2,"\n")
+    cat(paste0("min_z = ", z1, "\nmax_z = ", z2,"\n"))
     if(checks < 4) stop("Your input values z0 must lie in the domain (0,1).
                             If you have chosen 'normalise=F' then please ensure that your own transformation satisfies this criterion.")
   }
@@ -62,46 +62,79 @@ colouRmaps$general$get_colourmap_output <- function(r,g,b,z,z0,output_mode=1){
 colouRmaps$visuals$show_all <- function(){
   colourmaps  <- colouRmaps$mapnames()
   colourramps <- names(colouRmaps$starlink$ramps)
-  cdf <- NULL
-  cdd <- NULL
   np <- 1
   plotlist <- list()
+  nn <- 100
+  df <- data.frame('x'=(0:nn/nn),'y'=1)
   for(cm in colourmaps){
-    nn <- 1000
-    #cat(cm, "\n")
-    cdd <- colouRmaps[[cm]](1:nn, normalise=T, output_mode=2)
-    cdd$xmin <- (0:(nn-1))/nn
-    cdd$xmax <- (1:nn)/nn
-    cdd$id <- paste0(cm,"_",1:nn)
-    cdd$colourmap_name <- cm
-    cdd$hex <- grDevices::rgb(cdd$r,cdd$g,cdd$b)
-    cdd$col <- NA
-    fillvals <- stats::setNames(cdd$hex, cdd$id)
-    colvals  <- stats::setNames(cdd$col, cdd$id)
-    myplot <- c()
-    p <- ggplot2::ggplot(cdd) +
-      ggplot2::geom_rect(alpha = 1, size=0.01, stat="identity", ggplot2::aes(xmin=xmin,xmax=xmax,ymin=0,ymax=1, fill=id, colour=id)) +
-      ggplot2::scale_fill_manual(values = fillvals) +
-      ggplot2::scale_colour_manual(values = colvals) +
-      ggplot2::scale_x_continuous(expand = c(0.003, 0.003)) +
+    p <- ggplot2::ggplot(df, ggplot2::aes(x, y, fill=x)) +
+      ggplot2::geom_tile(aes(color=NULL)) +
+      ggplot2::continuous_scale(aesthetics = "fill", scale_name="gradient",
+                                palette=cmap_continuous(cm),
+                                na.value = "grey50", guide = "colourbar", trans="identity") +
       ggplot2::theme(legend.position = "none",
-            axis.text.x=ggplot2::element_blank(),
-            axis.ticks.x=ggplot2::element_blank(),
-            axis.text.y=ggplot2::element_blank(),
-            axis.ticks.y=ggplot2::element_blank(),
-            panel.grid.major = ggplot2::element_blank(),
-            panel.grid.minor = ggplot2::element_blank(),
-            panel.background = ggplot2::element_rect(fill = 'black'),
-            plot.background = ggplot2::element_rect(fill = "#BFD5E3"),
-            plot.margin = ggplot2::margin(t = 4, r = 4, b = 2, l = 4)
-      ) +
-      ggplot2::labs(subtitle=cm)
+                     axis.text.x=ggplot2::element_blank(),
+                     axis.ticks.x=ggplot2::element_blank(),
+                     axis.text.y=ggplot2::element_blank(),
+                     axis.ticks.y=ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_rect(fill = 'black'),
+                     plot.background = ggplot2::element_rect(fill = "#BFD5E3"),
+                     plot.margin = ggplot2::margin(t = 2, r = 2, b = 1, l = 2)
+      ) + ggplot2::xlab(NULL) + ggplot2::ylab(NULL) +
+      ggplot2::geom_text(
+        label=cm,
+        x=0.5,
+        y=1,
+        size = 3,
+        color = "black"
+      )
     plotlist[[np]] <- p
     np <- np + 1
   }
-
   mygrid <- get("grid.arrange", asNamespace("gridExtra"))
   do.call(mygrid, c(plotlist, ncol=3))
+}
+# ========================================
+colouRmaps$visuals$show_all_create_png <- function(){
+  colourmaps  <- colouRmaps$mapnames()
+  colourramps <- names(colouRmaps$starlink$ramps)
+  np <- 1
+  plotlist <- list()
+  nn <- 300
+  df <- data.frame('x'=(0:nn/nn),'y'=1)
+  for(cm in colourmaps){
+    p <- ggplot2::ggplot(df, aes(x, y, fill=x)) +
+      ggplot2::geom_tile(aes(color=NULL)) +
+      ggplot2::continuous_scale(aesthetics = "fill", scale_name="gradient",
+                       palette=cmap_continuous(cm),
+                       na.value = "grey50", guide = "colourbar", trans="identity") +
+      ggplot2::theme(legend.position = "none",
+                     axis.text.x=ggplot2::element_blank(),
+                     axis.ticks.x=ggplot2::element_blank(),
+                     axis.text.y=ggplot2::element_blank(),
+                     axis.ticks.y=ggplot2::element_blank(),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor = ggplot2::element_blank(),
+                     panel.background = ggplot2::element_rect(fill = 'black'),
+                     plot.background = ggplot2::element_rect(fill = "#BFD5E3"),
+                     plot.margin = ggplot2::margin(t = 2, r = 2, b = 1, l = 2)
+      ) + xlab(NULL) + ylab(NULL) +
+      ggplot2::geom_text(
+        label=cm,
+        x=0.5,
+        y=1,
+        size = 3,
+        color = "black"
+      )
+    plotlist[[np]] <- p
+    np <- np + 1
+  }
+  mygrid <- get("grid.arrange", asNamespace("gridExtra"))
+  grDevices::png(filename="man/figures/all_cmaps.png", width=1500, height=1500, bg = "transparent", res=300)
+  do.call(mygrid, c(plotlist, ncol=3))
+  grDevices::dev.off()
 }
 # =====================================
 colouRmaps$visuals$show <- function(colourmap_name="none", ncolours=1000, ...){
@@ -153,14 +186,14 @@ colouRmaps$visuals$show <- function(colourmap_name="none", ncolours=1000, ...){
 
   ggplot2::ggplot(data=dd) +
     ggplot2::geom_line(stat="identity", size=1, ggplot2::aes(x=z, y=value, colour=variable))+
-    ggplot2::geom_rect(data=ee, alpha = 1, size=0.01, stat="identity", ggplot2::aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax, fill=fill, colour=colour)) +
+    ggplot2::geom_rect(data=ee, alpha = 1, size=0.01, stat="identity", ggplot2::aes(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax, fill=fill, colour=NULL)) +
     ggplot2::scale_colour_manual(
       values = awesome_colours,
       aesthetics = c("colour", "fill")
     ) +
     ggplot2::scale_y_continuous(limits = c(0, cc$ymax), breaks = seq(0, cc$ymax, by = 0.1)) +
     ggplot2::theme(legend.position = "none") +
-    ggplot2::labs(subtitle=paste0("colouRmaps$show(", arg_string,")")) +
+    ggplot2::labs(subtitle=colourmap_name) +
     ggplot2::xlab("input value") +
     ggplot2::ylab("output colour r/g/b")
 }

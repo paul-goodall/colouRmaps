@@ -10,7 +10,7 @@
 #' Further information on STARLINK and GAIA can be found via
 #' http://star-www.rl.ac.uk/ and http://star-www.dur.ac.uk/~pdraper/
 #'
-#' @format An Rdata object containing various coulour lookup tables
+#' @format An Rdata object containing various colour lookup tables
 #' and functional colour maps.
 #'
 "colouRmaps"

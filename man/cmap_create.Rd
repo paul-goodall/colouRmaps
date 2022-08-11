@@ -6,7 +6,7 @@
 \usage{
 cmap_create(
   colourmap_name = "rainbow5",
-  zvals,
+  zvals = 1:1000,
   normalise = T,
   output_mode = 1,
   ...
@@ -23,6 +23,8 @@ cmap_create(
 1 ==> returns a named list
 2 ==> returns a detailed data frame
 3 ==> returns a simpler data frame}
+
+\item{...}{...}
 }
 \value{
 returns an object mapping your data to colours as per \code{output_mode}
