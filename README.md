@@ -236,7 +236,7 @@ image(x, y, volcano, col = cmap_create("new_palette1"), axes = FALSE)
 axis(1, at = seq(100, 800, by = 100))
 axis(2, at = seq(100, 600, by = 100))
 box()
-title(main = "Maunga Whau Volcano", font.main = 4, sub="The smooth 'new_palette1' is OK for images.")
+title(main = "Maunga Whau Volcano", font.main = 4, sub="The smooth 'new_palette1' is OK for images (but not amazing)")
 ```
 
 <img src="man/figures/README-image_example2-1.png" width="100%" />
