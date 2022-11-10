@@ -167,11 +167,11 @@ library(ggplot2)
 p1 <- ggplot(diamonds, aes(carat, price)) + 
   geom_hex(binwidth = c(.1, 500))
 
-p2 <- p1 + colouRise("gle_redblue", aesthetics = "fill")
+p2 <- p1 + colouRise("smooth_redblue", aesthetics = "fill")
 
-p3 <- p1 + colouRise("gle_redblue", aesthetics = "fill", trans="sqrt")
+p3 <- p1 + colouRise("smooth_redblue", aesthetics = "fill", trans="sqrt")
 
-p4 <- p1 + colouRise("gle_redblue", aesthetics = "fill", trans="log10")
+p4 <- p1 + colouRise("smooth_redblue", aesthetics = "fill", trans="log10")
 
 library(gridExtra)
 grid.arrange(p1,p2,p3,p4, nrow=2,ncol=2)

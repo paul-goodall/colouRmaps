@@ -160,6 +160,301 @@ colouRmaps$define_map$smooth_redblue <- function(z0, normalise=T, output_mode=1)
   return (awesome_colours)
 }
 # =====================================
+colouRmaps$define_map$sequential <- function(z0, normalise=T, output_mode=1, target_colour="#ff0000", facs=c(0.95,0.4), trans_x = 0.65, initial_colour=NULL, final_colour=NULL){
+
+  z <- colouRmaps$general$normalise_z(z0, normalise)
+  r=g=b <- z*0
+
+  target_rgb <- grDevices::col2rgb(target_colour)
+  target_r <- target_rgb[1]/255
+  target_g <- target_rgb[2]/255
+  target_b <- target_rgb[3]/255
+
+  if(is.null(initial_colour)){
+    initial_r <- 1 + (target_r - 1)*(1-facs[1])
+    initial_g <- 1 + (target_g - 1)*(1-facs[1])
+    initial_b <- 1 + (target_b - 1)*(1-facs[1])
+  } else {
+    initial_rgb <- grDevices::col2rgb(initial_colour)
+    initial_r <- initial_rgb[1]/255
+    initial_g <- initial_rgb[2]/255
+    initial_b <- initial_rgb[3]/255
+  }
+
+  if(is.null(final_colour)){
+    final_r <- facs[2]*target_r
+    final_g <- facs[2]*target_g
+    final_b <- facs[2]*target_b
+  } else {
+    final_rgb <- grDevices::col2rgb(final_colour)
+    final_r <- final_rgb[1]/255
+    final_g <- final_rgb[2]/255
+    final_b <- final_rgb[3]/255
+  }
+
+  nn <- 100
+  vec1 <- 0:(ceiling(nn*trans_x))
+  vec2 <- 1:(nn - length(vec1)+1)
+
+  nvec1 <- vec1/max(vec1)
+  nvec2 <- vec2/max(vec2)
+  r1 <- (1-nvec1)*initial_r + nvec1*target_r
+  g1 <- (1-nvec1)*initial_g + nvec1*target_g
+  b1 <- (1-nvec1)*initial_b + nvec1*target_b
+  r2 <- (1-nvec2)*target_r + nvec2*final_r
+  g2 <- (1-nvec2)*target_g + nvec2*final_g
+  b2 <- (1-nvec2)*target_b + nvec2*final_b
+  rr <- c(r1,r2)
+  gg <- c(g1,g2)
+  bb <- c(b1,b2)
+  zz <- (0:(length(rr)-1))/(length(rr)-1)
+
+  r <- stats::approx(zz, rr, xout=z)$y
+  g <- stats::approx(zz, gg, xout=z)$y
+  b <- stats::approx(zz, bb, xout=z)$y
+
+  # Cap and Tail:
+  r <- colouRmaps$general$rgb_cap_n_tail(r)
+  g <- colouRmaps$general$rgb_cap_n_tail(g)
+  b <- colouRmaps$general$rgb_cap_n_tail(b)
+
+  awesome_colours <- colouRmaps$general$get_colourmap_output(r,g,b,z,z0,output_mode)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$sequential2 <- function(z0, normalise=T, output_mode=1, colours=c("#ff0000","#ff00ff","#3F157D"), thresholds=c(0.9,0.2)){
+
+  z <- colouRmaps$general$normalise_z(z0, normalise)
+  r=g=b <- z*0
+
+  ncolours <- length(colours)
+
+  target_rgb <- grDevices::col2rgb(target_colour)
+  target_r <- target_rgb[1]/255
+  target_g <- target_rgb[2]/255
+  target_b <- target_rgb[3]/255
+
+  if(is.null(initial_colour)){
+    initial_r <- 1 + (target_r - 1)*(1-facs[1])
+    initial_g <- 1 + (target_g - 1)*(1-facs[1])
+    initial_b <- 1 + (target_b - 1)*(1-facs[1])
+  } else {
+    initial_rgb <- grDevices::col2rgb(initial_colour)
+    initial_r <- initial_rgb[1]/255
+    initial_g <- initial_rgb[2]/255
+    initial_b <- initial_rgb[3]/255
+  }
+
+  if(is.null(final_colour)){
+    final_r <- facs[2]*target_r
+    final_g <- facs[2]*target_g
+    final_b <- facs[2]*target_b
+  } else {
+    final_rgb <- grDevices::col2rgb(final_colour)
+    final_r <- final_rgb[1]/255
+    final_g <- final_rgb[2]/255
+    final_b <- final_rgb[3]/255
+  }
+
+  nn <- 100
+  vec1 <- 0:(ceiling(nn*trans_x))
+  vec2 <- 1:(nn - length(vec1)+1)
+
+  nvec1 <- vec1/max(vec1)
+  nvec2 <- vec2/max(vec2)
+  r1 <- (1-nvec1)*initial_r + nvec1*target_r
+  g1 <- (1-nvec1)*initial_g + nvec1*target_g
+  b1 <- (1-nvec1)*initial_b + nvec1*target_b
+  r2 <- (1-nvec2)*target_r + nvec2*final_r
+  g2 <- (1-nvec2)*target_g + nvec2*final_g
+  b2 <- (1-nvec2)*target_b + nvec2*final_b
+  rr <- c(r1,r2)
+  gg <- c(g1,g2)
+  bb <- c(b1,b2)
+  zz <- (0:(length(rr)-1))/(length(rr)-1)
+
+  r <- stats::approx(zz, rr, xout=z)$y
+  g <- stats::approx(zz, gg, xout=z)$y
+  b <- stats::approx(zz, bb, xout=z)$y
+
+  # Cap and Tail:
+  r <- colouRmaps$general$rgb_cap_n_tail(r)
+  g <- colouRmaps$general$rgb_cap_n_tail(g)
+  b <- colouRmaps$general$rgb_cap_n_tail(b)
+
+  awesome_colours <- colouRmaps$general$get_colourmap_output(r,g,b,z,z0,output_mode)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$reds <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#ff0000"
+  facs=c(0.95,0.4)
+  trans_x = 0.65
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$greys <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#808080"
+  facs=c(1,0)
+  trans_x = 0.5
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$purples <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#3F157D"
+  facs=c(0.95,0.4)
+  trans_x = 0.65
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$purples <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#3F157D"
+  facs=c(0.95,0.4)
+  trans_x = 0.65
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+
+
+# =====================================
+colouRmaps$define_map$royalblues <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#0000ff"
+  facs=c(0.95,0.4)
+  trans_x = 0.65
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$kingfisherblues <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#2373B6"
+  facs=c(0.95,0.4)
+  trans_x = 0.65
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$greens <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#29924A"
+  facs=c(0.95,0.3)
+  trans_x = 0.65
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$oranges <- function(z0, normalise=T, output_mode=1){
+
+  target_colour <- "#EC630F"
+  facs=c(0.95,0.4)
+  trans_x = 0.5
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      facs=facs,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+colouRmaps$define_map$yelloranbrow <- function(z0, normalise=T, output_mode=1){
+
+  initial_colour <- "#FFFDDE"
+  target_colour  <- "#F98F24"
+  final_colour  <- "#951213"
+  trans_x = 0.5
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      initial_colour=initial_colour,
+                                                      final_colour=final_colour,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
+# =====================================
+colouRmaps$define_map$yelloranred <- function(z0, normalise=T, output_mode=1){
+
+  initial_colour <- "#FFFDDE"
+  target_colour  <- "#F98F24"
+  final_colour  <- "#B31826"
+  trans_x = 0.5
+
+  awesome_colours <- colouRmaps$define_map$sequential(z0=z0,
+                                                      normalise=normalise,
+                                                      output_mode=output_mode,
+                                                      target_colour=target_colour,
+                                                      initial_colour=initial_colour,
+                                                      final_colour=final_colour,
+                                                      trans_x = trans_x)
+
+  return (awesome_colours)
+}
+# =====================================
 colouRmaps$define_map$rgb_harmonics <- function(z0, normalise=T, output_mode=1, freq_r=0.5,freq_g=1.5,freq_b=2.5, phase_r=0, phase_g=0, phase_b=0){
 
   z <- colouRmaps$general$normalise_z(z0, normalise)
@@ -178,7 +473,6 @@ colouRmaps$define_map$rgb_harmonics <- function(z0, normalise=T, output_mode=1, 
 
   return (awesome_colours)
 }
-
 # =====================================
 colouRmaps$define_map$great_barrier_reef <- function(z0, normalise=T, output_mode=1){
 
