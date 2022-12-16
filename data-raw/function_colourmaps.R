@@ -1,5 +1,5 @@
 # =====================================
-source("general_functions.R")
+source("data-raw/general_functions.R")
 # =====================================
 colouRmaps$define_map$rainbow5 <- function(z0, normalise=T, output_mode=1){
 

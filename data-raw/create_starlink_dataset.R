@@ -14,7 +14,7 @@ url: http://star-www.dur.ac.uk/~pdraper/
 
 starlink <- list()
 starlink$hdr <- hdr
-ff <- Sys.glob("colourmap_data/starlink/maps/*.fits")
+ff <- Sys.glob("data-raw/colourmap_data/starlink/maps/*.fits")
 for(f in ff){
   pal <- gsub(".fits","", basename(f))
   aa <- as.data.frame(read.fits(f)$dat[[1]])
@@ -30,5 +30,5 @@ for(f in ff){
   starlink[["ramps"]][[pal]] <- aa
 }
 # ---------------------------------------------------
-save(starlink, file="colourmap_data/starlink.Rdata")
+save(starlink, file="data-raw/colourmap_data/starlink.Rdata")
 # ---------------------------------------------------

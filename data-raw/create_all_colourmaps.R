@@ -8,10 +8,10 @@
 # 2. A function_colourmaps.R file containing the new additional colourmaps.  These will create 1000 values.
 # ==========
 # For pre-requisite 1:
-load("colourmap_data/starlink.Rdata")
+load("data-raw/colourmap_data/starlink.Rdata")
 # ==========
 # For pre-requisite 2:
-source("function_colourmaps.R")
+source("data-raw/function_colourmaps.R")
 # ==========
 colouRmaps$starlink <- starlink
 # ==========
@@ -32,5 +32,5 @@ for(cm in names(colouRmaps$visuals)){
 save(colouRmaps, file="colouRmaps.Rdata")
 # ==========
 # Save it to the package data dir:
-use_data(colouRmaps, overwrite = TRUE)
+usethis::use_data(colouRmaps, overwrite = TRUE)
 
